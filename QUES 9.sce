@@ -1,43 +1,61 @@
-img1=imread("C:\Users\aashi\Desktop\rose.png");
-img=im2double(img1);
-fftImg = fft2(im2double(img1));
-//subplot(2, 2, 1), imshow(img), title('Original Image');
-//subplot(2, 2, 2);
-//imshow((log(1 + abs(fftshift(fftImg)))));
-//title('Fourier Transformation of the Image');
+//a. Apply FFT on given image 
 
-f1=fspecial('gaussian', 0.5);
-f2=fspecial('butterworth1', 0.5);
-f3=mkfftfilter(img, 'binary', 0.5);
+img = imread("C:\Users\aashi\Desktop\rose.png"); 
+a=rgb2gray(img) 
+subplot(3,3,1) 
+title('Original Image') 
+imshow(a); 
+af=fft2(im2double(a)); 
+subplot(3,3,2); 
+imshow(mat2gray(log(1+abs(fftshift(af))))); 
+title('Fourier Transformation of the Image'); 
 
+//b. Perform low pass and high pass filtering in frequency domain 
 
-//lowpasss
-f1_imgl=fftshift(f1).*fftImg;
-f2_imgl=fftshift(f2).*fftImg;
-f3_imgl=fftshift(f3).*fftImg ;
-
-//highpass
-f1_imgh=fftshift(1-f1).*fftImg ;
-f2_imgh=fftshift(1-f2).*fftImg ;
-f3_imgh=fftshift(1-f3).*fftImg ;
-
-
-//ifft
-guassImgl=real(ifft(f1_imgl));
-butterImgl=real(ifft(f1_imgl));
-binaryImgl=real(ifft(f1_imgl));
-guassImgh=real(ifft(f1_imgh));
-butterImgh=real(ifft(f1_imgh));
-binaryImgh=real(ifft(f1_imgh));
+f=mkfftfilter(a,'gauss',0.5) 
+f1=mkfftfilter(a,'butterworth1',0.4) 
+f2=mkfftfilter(a,'binary',0.2) 
+//low pass 
+l1=fftshift(f).*af; 
+l2=fftshift(f1).*af; 
+l3=fftshift(f2).*af; 
+//high pass 
+hf=mkfftfilter(a,'gauss',0.1) 
+hf1=mkfftfilter(a,'butterworth1',0.08) 
+hf2=mkfftfilter(a,'binary',0.05) 
+h1=fftshift(1-hf).*af; 
+h2=fftshift(1-hf1).*af; 
+h3=fftshift(1-hf2).*af; 
 
 
-subplot(3, 3, 1), imshow(img1), title('Original Image');
-subplot(3, 3, 2);
-imshow((log(1 + abs(fftshift(fftImg)))));
-title('Fourier Transformation of the Image');
-subplot(3,3,3), imshow(gaussImgl), title('Low Pass Gauss');
-subplot(3,3,4), imshow(butterImgl), title('Low Pass Butterworth');
-subplot(3,3,5), imshow(binaryImgl), title('Low Pass Binary');
-subplot(3,3,6), imshow(gaussImgh), title('High Pass Gauss');
-subplot(3,3,7), imshow(butterImgh), title('High Pass Butterworth');
-subplot(3,3,8), imshow(binaryImgh), title('High Pass Binary');
+//Apply IFFT to reconstruct the image 
+ 
+img1=real(ifft(l1)); 
+img2=real(ifft(l2)); 
+img3=real(ifft(l3)); 
+img4=real(ifft(h1)); 
+img5=real(ifft(h2)); 
+img6=real(ifft(h3)); 
+subplot(3,3,3) 
+title('Low Pass Gauss') 
+imshow(img1); 
+ 
+subplot(3,3,4) 
+title('Low Pass butterworth') 
+imshow(img2); 
+ 
+subplot(3,3,5) 
+title('Low Pass Binary') 
+imshow(img3); 
+ 
+subplot(3,3,6) 
+title('High Pass Gauss') 
+imshow(img4); 
+ 
+subplot(3,3,7) 
+title('High Pass Butterworth') 
+imshow(img5); 
+ 
+subplot(3,3,8) 
+title('High Pass Binary') 
+imshow(img6); 
